@@ -78,9 +78,22 @@ void MineField::draw(Graphics& gfx)
     }
 }
 
-void MineField::reveal(const Vei2& gridPos)
+void MineField::onMouseLeftClick(const Vei2& mousePixelPos)
+{
+    const Vei2 gridPos{ pixelToGridPosition(mousePixelPos) };
+    revealTile(gridPos);
+}
+
+void MineField::revealTile(const Vei2& gridPos)
 {
     minefield[gridPos.y * TILE_PER_WIDTH + gridPos.x].state = Tile::State::Revealed;
+}
+
+Vei2 MineField::pixelToGridPosition(const Vei2& pixelPos) const
+{
+    int tileSize = SpriteCodex::tileSize;
+    assert(pixelPos.x >= 0 && pixelPos.x <= TILE_PER_WIDTH * tileSize && pixelPos.y >= 0 && pixelPos.y <= TILE_PER_HEIGHT * tileSize);
+    return pixelPos / tileSize;
 }
 
 Vei2 MineField::Tile::gridToPixelPosition(const Vei2& gridPos) const

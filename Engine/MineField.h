@@ -8,7 +8,7 @@ class MineField
 public:
 	MineField(int _nMines);
 	void draw(Graphics& gfx);
-	void reveal(const Vei2& gridPos);
+	void onMouseLeftClick(const Vei2& mousePixelPos);
 private:
 	class Tile
 	{
@@ -31,6 +31,8 @@ private:
 	};
 private:
 	Tile& tileAt(const Vei2& gridPos);
+	void revealTile(const Vei2& gridPos);
+	Vei2 pixelToGridPosition(const Vei2& pixelPos) const;
 private:
 	static constexpr int TILE_PER_WIDTH = 20;
 	static constexpr int TILE_PER_HEIGHT = 16;
