@@ -23,13 +23,13 @@ MineField::MineField(int _nMines)
 		Vei2 gridPos = { 0,0 };
 		do {
 			gridPos = { xDist(rng), yDist(rng) };
-		} while (tileAt(gridPos).hasMine());
+		} while (tileAt(gridPos).hasMine);
 		tileAt(gridPos).spawnMine();
 	}
 }
 
 MineField::Tile::Tile(const Vei2& pos)
-    :gridPos(pos), state(State::Hidden), mine(false)
+    :gridPos(pos), state(State::Hidden), hasMine(false)
 {
 }
 
@@ -40,7 +40,7 @@ void MineField::Tile::draw(Graphics& gfx)
     {
     case MineField::Tile::State::Revealed:
         {
-            if (mine)
+            if (hasMine)
             {
                 SpriteCodex::DrawTile0(pixelPos, gfx);
                 SpriteCodex::DrawTileBomb(pixelPos, gfx);
@@ -60,15 +60,10 @@ void MineField::Tile::draw(Graphics& gfx)
     }
 }
 
-bool MineField::Tile::hasMine()
-{
-    return mine;
-}
-
 void MineField::Tile::spawnMine()
 {
-    assert(!hasMine());
-    mine = true;
+    assert(!hasMine);
+    hasMine = true;
 }
 
 void MineField::draw(Graphics& gfx)
@@ -81,6 +76,11 @@ void MineField::draw(Graphics& gfx)
     {
         minefield[i].draw(gfx);
     }
+}
+
+void MineField::reveal(const Vei2& gridPos)
+{
+    minefield[gridPos.y * TILE_PER_WIDTH + gridPos.x].state = Tile::State::Revealed;
 }
 
 Vei2 MineField::Tile::gridToPixelPosition(const Vei2& gridPos) const

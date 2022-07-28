@@ -8,6 +8,7 @@ class MineField
 public:
 	MineField(int _nMines);
 	void draw(Graphics& gfx);
+	void reveal(const Vei2& gridPos);
 private:
 	class Tile
 	{
@@ -20,14 +21,13 @@ private:
 		Tile() = default;
 		Tile(const Vei2& pos);
 		void draw(Graphics& gfx);
-		bool hasMine();
 		void spawnMine();
 	private:
 		Vei2 gridToPixelPosition(const Vei2& gridPos) const;
-	private:
+	public:
 		Vei2 gridPos;
 		State state;
-		bool mine;
+		bool hasMine;
 	};
 private:
 	Tile& tileAt(const Vei2& gridPos);
