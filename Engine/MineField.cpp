@@ -5,18 +5,18 @@
 MineField::MineField(int _nMines)
 {
     nMines = _nMines;
-    for (int y = 0; y < TILE_PER_HEIGHT; ++y)
+    for (int y = 0; y < TILES_PER_HEIGHT; ++y)
     {
-        for (int x = 0; x < TILE_PER_WIDTH; ++x)
+        for (int x = 0; x < TILES_PER_WIDTH; ++x)
         {
-            minefield[y * TILE_PER_WIDTH + x] = Tile({ x, y });
+            minefield[y * TILES_PER_WIDTH + x] = Tile({ x, y });
         }
     }
 
     std::random_device rd;
     std::mt19937 rng(rd());
-    std::uniform_int_distribution<int> xDist(0, TILE_PER_WIDTH - 1);
-    std::uniform_int_distribution<int> yDist(0, TILE_PER_HEIGHT - 1);
+    std::uniform_int_distribution<int> xDist(0, TILES_PER_WIDTH - 1);
+    std::uniform_int_distribution<int> yDist(0, TILES_PER_HEIGHT - 1);
 
 	for (int i = 0; i < nMines; ++i)
 	{
@@ -68,7 +68,7 @@ void MineField::Tile::spawnMine()
 
 void MineField::draw(Graphics& gfx)
 {
-    int nTiles = TILE_PER_HEIGHT * TILE_PER_WIDTH;
+    int nTiles = TILES_PER_HEIGHT * TILES_PER_WIDTH;
     RectI background{ 0, 20 * 16, 0, 16 * 16 };
     gfx.DrawRect(background, Colors::White);
 
@@ -78,22 +78,25 @@ void MineField::draw(Graphics& gfx)
     }
 }
 
-void MineField::onMouseLeftClick(const Vei2& mousePixelPos)
+bool MineField::mouseIsWithinField(const Mouse& mouse)
 {
-    const Vei2 gridPos{ pixelToGridPosition(mousePixelPos) };
-    revealTile(gridPos);
+    int tileSize = SpriteCodex::tileSize;
+    Vei2 mouseGridPos{ mouse.GetPos() };
+    return (mouseGridPos.x >= 0 && mouseGridPos.x < TILES_PER_WIDTH * tileSize &&
+           mouseGridPos.y >= 0 && mouseGridPos.y < TILES_PER_HEIGHT * tileSize);
 }
 
-void MineField::revealTile(const Vei2& gridPos)
+void MineField::revealTile(const Vei2& pixelPos)
 {
-    minefield[gridPos.y * TILE_PER_WIDTH + gridPos.x].state = Tile::State::Revealed;
+    const Vei2 gridPos{ pixelToGridPosition(pixelPos) };
+    minefield[gridPos.y * TILES_PER_WIDTH + gridPos.x].state = Tile::State::Revealed;
 }
 
 Vei2 MineField::pixelToGridPosition(const Vei2& pixelPos) const
 {
-    int tileSize = SpriteCodex::tileSize;
-    assert(pixelPos.x >= 0 && pixelPos.x <= TILE_PER_WIDTH * tileSize && pixelPos.y >= 0 && pixelPos.y <= TILE_PER_HEIGHT * tileSize);
-    return pixelPos / tileSize;
+	int tileSize = SpriteCodex::tileSize;
+	assert(pixelPos.x >= 0 && pixelPos.x < TILES_PER_WIDTH * tileSize && pixelPos.y >= 0 && pixelPos.y < TILES_PER_HEIGHT * tileSize);
+	return pixelPos / tileSize;
 }
 
 Vei2 MineField::Tile::gridToPixelPosition(const Vei2& gridPos) const
@@ -103,5 +106,5 @@ Vei2 MineField::Tile::gridToPixelPosition(const Vei2& gridPos) const
 
 MineField::Tile& MineField::tileAt(const Vei2& gridPos)
 {
-    return minefield[gridPos.y * TILE_PER_WIDTH + gridPos.x];
+    return minefield[gridPos.y * TILES_PER_WIDTH + gridPos.x];
 }

@@ -2,13 +2,15 @@
 #include "Graphics.h"
 #include "Vei2.h"
 #include "SpriteCodex.h"
+#include "Mouse.h"
 
 class MineField
 {
 public:
 	MineField(int _nMines);
 	void draw(Graphics& gfx);
-	void onMouseLeftClick(const Vei2& mousePixelPos);
+	void revealTile(const Vei2& pixelPos);
+	bool mouseIsWithinField(const Mouse& mouse);
 private:
 	class Tile
 	{
@@ -31,12 +33,11 @@ private:
 	};
 private:
 	Tile& tileAt(const Vei2& gridPos);
-	void revealTile(const Vei2& gridPos);
 	Vei2 pixelToGridPosition(const Vei2& pixelPos) const;
 private:
-	static constexpr int TILE_PER_WIDTH = 20;
-	static constexpr int TILE_PER_HEIGHT = 16;
+	static constexpr int TILES_PER_WIDTH = 20;
+	static constexpr int TILES_PER_HEIGHT = 16;
 	int nMines;
-	Tile minefield[TILE_PER_WIDTH * TILE_PER_HEIGHT];
+	Tile minefield[TILES_PER_WIDTH * TILES_PER_HEIGHT];
 };
 
