@@ -10,6 +10,7 @@ public:
 	MineField(int _nMines);
 	void draw(Graphics& gfx);
 	void revealTile(const Vei2& pixelPos);
+	void flagTile(const Vei2& pixelPos);
 	bool mouseIsWithinField(const Mouse& mouse);
 private:
 	class Tile
@@ -24,6 +25,8 @@ private:
 		Tile(const Vei2& pos);
 		void draw(Graphics& gfx);
 		void spawnMine();
+		void reveal();
+		void flag();
 	private:
 		Vei2 gridToPixelPosition(const Vei2& gridPos) const;
 	public:

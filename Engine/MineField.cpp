@@ -66,6 +66,26 @@ void MineField::Tile::spawnMine()
     hasMine = true;
 }
 
+void MineField::Tile::reveal()
+{
+    if (state == State::Hidden)
+    {
+        state = State::Revealed;
+    }
+}
+
+void MineField::Tile::flag()
+{
+    if (state == State::Hidden)
+    {
+        state = State::Flagged;
+    }
+    else if (state == State::Flagged)
+    {
+        state = State::Hidden;
+    }
+}
+
 void MineField::draw(Graphics& gfx)
 {
     int nTiles = TILES_PER_HEIGHT * TILES_PER_WIDTH;
@@ -89,7 +109,13 @@ bool MineField::mouseIsWithinField(const Mouse& mouse)
 void MineField::revealTile(const Vei2& pixelPos)
 {
     const Vei2 gridPos{ pixelToGridPosition(pixelPos) };
-    minefield[gridPos.y * TILES_PER_WIDTH + gridPos.x].state = Tile::State::Revealed;
+    minefield[gridPos.y * TILES_PER_WIDTH + gridPos.x].reveal();
+}
+
+void MineField::flagTile(const Vei2& pixelPos)
+{
+    const Vei2 gridPos{ pixelToGridPosition(pixelPos) };
+    minefield[gridPos.y * TILES_PER_WIDTH + gridPos.x].flag();
 }
 
 Vei2 MineField::pixelToGridPosition(const Vei2& pixelPos) const

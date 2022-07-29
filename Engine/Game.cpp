@@ -40,9 +40,17 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	// ONLY ATTEMPT TO REVEAL A TILE WHEN THE MOUSE WAS CLICKED INSIDE OF THE MINEFIELD
-	if (wnd.mouse.LeftIsPressed() && field.mouseIsWithinField(wnd.mouse))
+	if (!wnd.mouse.IsEmpty() && field.mouseIsWithinField(wnd.mouse))
 	{
-		field.revealTile(wnd.mouse.GetPos());
+		const Mouse::Event ev = wnd.mouse.Read();		
+		if (ev.GetType() == Mouse::Event::Type::LPress)
+		{
+			field.revealTile(ev.GetPos());
+		}
+		else if (ev.GetType() == Mouse::Event::Type::RPress)
+		{
+			field.flagTile(ev.GetPos());
+		}
 	}
 }
 
