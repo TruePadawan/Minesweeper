@@ -6,6 +6,7 @@
 MineField::MineField(int _nMines)
 {
     nMines = _nMines;
+    isMineTriggered = false;
     for (int y = 0; y < TILES_PER_HEIGHT; ++y)
     {
         for (int x = 0; x < TILES_PER_WIDTH; ++x)
@@ -43,30 +44,68 @@ MineField::Tile::Tile(const Vei2& pos)
 {
 }
 
-void MineField::Tile::draw(Graphics& gfx)
+void MineField::Tile::draw(Graphics& gfx, bool mineTriggered)
 {
     Vei2 pixelPos = gridToPixelPosition(gridPos);
-    switch (state)
+    if (mineTriggered)
     {
-    case MineField::Tile::State::Revealed:
+        switch (state)
+        {
+        case MineField::Tile::State::Revealed:
         {
             if (hasMine)
             {
-                /*SpriteCodex::DrawTile0(pixelPos, gfx);*/
-                SpriteCodex::DrawTileBomb(pixelPos, gfx);
+                SpriteCodex::DrawTileBombRed(pixelPos, gfx);
             }
             else {
                 SpriteCodex::DrawTileNumber(pixelPos, nAdjacentMines, gfx);
             }
         }
         break;
-    case MineField::Tile::State::Flagged:
-        SpriteCodex::DrawTileButton(pixelPos, gfx);
-        SpriteCodex::DrawTileFlag(pixelPos, gfx);
-        break;
-    case MineField::Tile::State::Hidden:
-        SpriteCodex::DrawTileButton(pixelPos, gfx);
-        break;
+        case MineField::Tile::State::Flagged:
+            if (hasMine)
+            {
+                SpriteCodex::DrawTileButton(pixelPos, gfx);
+                SpriteCodex::DrawTileFlag(pixelPos, gfx);
+            }
+            else {
+                SpriteCodex::DrawTileBomb(pixelPos, gfx);
+                SpriteCodex::DrawTileCross(pixelPos, gfx);
+            }
+            break;
+        case MineField::Tile::State::Hidden:
+            if (hasMine)
+            {
+                SpriteCodex::DrawTileBomb(pixelPos, gfx);
+            }
+            else {
+                SpriteCodex::DrawTileButton(pixelPos, gfx);
+            }
+            break;
+        }
+    }
+    else {
+        switch (state)
+        {
+        case MineField::Tile::State::Revealed:
+            {
+                if (hasMine)
+                {
+                    SpriteCodex::DrawTileBomb(pixelPos, gfx);
+                }
+                else {
+                    SpriteCodex::DrawTileNumber(pixelPos, nAdjacentMines, gfx);
+                }
+            }
+            break;
+        case MineField::Tile::State::Flagged:
+            SpriteCodex::DrawTileButton(pixelPos, gfx);
+            SpriteCodex::DrawTileFlag(pixelPos, gfx);
+            break;
+        case MineField::Tile::State::Hidden:
+            SpriteCodex::DrawTileButton(pixelPos, gfx);
+            break;
+        }
     }
 }
 
@@ -110,7 +149,7 @@ void MineField::draw(Graphics& gfx)
 
     for (int i = 0; i < nTiles; ++i)
     {
-        minefield[i].draw(gfx);
+        minefield[i].draw(gfx, isMineTriggered);
     }
 }
 
@@ -122,10 +161,19 @@ bool MineField::mouseIsWithinField(const Mouse& mouse)
            mouseGridPos.y >= 0 && mouseGridPos.y < TILES_PER_HEIGHT * tileSize);
 }
 
+bool MineField::mineTriggered()
+{
+    return isMineTriggered;
+}
+
 void MineField::revealTile(const Vei2& pixelPos)
 {
     const Vei2 gridPos{ pixelToGridPosition(pixelPos) };
-    minefield[gridPos.y * TILES_PER_WIDTH + gridPos.x].reveal();
+    tileAt(gridPos).reveal();
+    if (tileAt(gridPos).hasMine)
+    {
+        isMineTriggered = true;
+    }
 }
 
 void MineField::flagTile(const Vei2& pixelPos)

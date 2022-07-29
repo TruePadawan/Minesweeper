@@ -39,6 +39,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	if (field.mineTriggered()) return;
 	// ONLY ATTEMPT TO REVEAL A TILE WHEN THE MOUSE WAS CLICKED INSIDE OF THE MINEFIELD
 	if (!wnd.mouse.IsEmpty() && field.mouseIsWithinField(wnd.mouse))
 	{

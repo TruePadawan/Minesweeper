@@ -12,6 +12,7 @@ public:
 	void revealTile(const Vei2& pixelPos);
 	void flagTile(const Vei2& pixelPos);
 	bool mouseIsWithinField(const Mouse& mouse);
+	bool mineTriggered();
 private:
 	class Tile
 	{
@@ -23,7 +24,7 @@ private:
 	public:
 		Tile() = default;
 		Tile(const Vei2& pos);
-		void draw(Graphics& gfx);
+		void draw(Graphics& gfx, bool mineTriggered);
 		void spawnMine();
 		void reveal();
 		void flag();
@@ -44,6 +45,7 @@ private:
 	static constexpr int TILES_PER_WIDTH = 20;
 	static constexpr int TILES_PER_HEIGHT = 16;
 	int nMines;
+	bool isMineTriggered;
 	Tile minefield[TILES_PER_WIDTH * TILES_PER_HEIGHT];
 };
 
