@@ -27,14 +27,17 @@ private:
 		void spawnMine();
 		void reveal();
 		void flag();
+		void setNumberOfAdjacentMines(int count);
 	private:
 		Vei2 gridToPixelPosition(const Vei2& gridPos) const;
 	public:
 		Vei2 gridPos;
 		State state;
 		bool hasMine;
+		int nAdjacentMines = -1;
 	};
 private:
+	int getNumberOfAdjacentMines(const Tile& tile);
 	Tile& tileAt(const Vei2& gridPos);
 	Vei2 pixelToGridPosition(const Vei2& pixelPos) const;
 private:
