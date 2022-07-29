@@ -4,9 +4,12 @@
 #include <algorithm>
 
 MineField::MineField(int _nMines)
+    :nMines(_nMines), isMineTriggered(false)
 {
-    nMines = _nMines;
-    isMineTriggered = false;
+    int boundaryRight = MARGIN_LEFT + (TILES_PER_WIDTH * SpriteCodex::tileSize);
+    int boundaryBottom = MARGIN_TOP + (TILES_PER_HEIGHT * SpriteCodex::tileSize);
+    boundary = RectI(Vei2(MARGIN_LEFT, MARGIN_TOP), Vei2(boundaryRight, boundaryBottom));
+
     for (int y = 0; y < TILES_PER_HEIGHT; ++y)
     {
         for (int x = 0; x < TILES_PER_WIDTH; ++x)
@@ -46,7 +49,9 @@ MineField::Tile::Tile(const Vei2& pos)
 
 void MineField::Tile::draw(Graphics& gfx, bool mineTriggered)
 {
+    // ADD THE MARGIN OFFSET TO ALL PIXELS TO BE DRAWN
     Vei2 pixelPos = gridToPixelPosition(gridPos);
+    pixelPos += Vei2(MARGIN_LEFT, MARGIN_TOP);
     if (mineTriggered)
     {
         switch (state)
@@ -65,7 +70,7 @@ void MineField::Tile::draw(Graphics& gfx, bool mineTriggered)
         case MineField::Tile::State::Flagged:
             if (hasMine)
             {
-                SpriteCodex::DrawTileButton(pixelPos, gfx);
+                SpriteCodex::DrawTileBomb(pixelPos, gfx);
                 SpriteCodex::DrawTileFlag(pixelPos, gfx);
             }
             else {
@@ -144,9 +149,7 @@ void MineField::Tile::setNumberOfAdjacentMines(int count)
 void MineField::draw(Graphics& gfx)
 {
     int nTiles = TILES_PER_HEIGHT * TILES_PER_WIDTH;
-    RectI background{ 0, 20 * 16, 0, 16 * 16 };
-    gfx.DrawRect(background, Colors::White);
-
+    gfx.DrawRect(boundary, Colors::White);
     for (int i = 0; i < nTiles; ++i)
     {
         minefield[i].draw(gfx, isMineTriggered);
@@ -157,8 +160,7 @@ bool MineField::mouseIsWithinField(const Mouse& mouse)
 {
     int tileSize = SpriteCodex::tileSize;
     Vei2 mouseGridPos{ mouse.GetPos() };
-    return (mouseGridPos.x >= 0 && mouseGridPos.x < TILES_PER_WIDTH * tileSize &&
-           mouseGridPos.y >= 0 && mouseGridPos.y < TILES_PER_HEIGHT * tileSize);
+    return boundary.Contains(mouseGridPos);
 }
 
 bool MineField::mineTriggered()
@@ -185,8 +187,10 @@ void MineField::flagTile(const Vei2& pixelPos)
 Vei2 MineField::pixelToGridPosition(const Vei2& pixelPos) const
 {
 	int tileSize = SpriteCodex::tileSize;
-	assert(pixelPos.x >= 0 && pixelPos.x < TILES_PER_WIDTH * tileSize && pixelPos.y >= 0 && pixelPos.y < TILES_PER_HEIGHT * tileSize);
-	return pixelPos / tileSize;
+	assert(boundary.Contains(pixelPos));
+    // ACCOUNT FOR MARGIN OFFSET
+    Vei2 modifiedPixelPos{ pixelPos - Vei2(MARGIN_LEFT, MARGIN_TOP) };
+	return modifiedPixelPos / tileSize;
 }
 
 int MineField::getNumberOfAdjacentMines(const Tile& tile)

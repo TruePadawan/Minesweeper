@@ -33,6 +33,12 @@ bool RectI::IsContainedBy( const RectI & other ) const
 		top >= other.top && bottom <= other.bottom;
 }
 
+bool RectI::Contains(const Vei2& vector) const
+{
+	return (vector.x >= left && vector.x < right &&
+			vector.y >= top && vector.y < bottom);
+}
+
 RectI RectI::FromCenter( const Vei2 & center,int halfWidth,int halfHeight )
 {
 	const Vei2 half( halfWidth,halfHeight );

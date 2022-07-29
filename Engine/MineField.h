@@ -3,6 +3,7 @@
 #include "Vei2.h"
 #include "SpriteCodex.h"
 #include "Mouse.h"
+#include "RectI.h"
 
 class MineField
 {
@@ -44,6 +45,9 @@ private:
 private:
 	static constexpr int TILES_PER_WIDTH = 20;
 	static constexpr int TILES_PER_HEIGHT = 16;
+	static constexpr int MARGIN_LEFT = 240;
+	static constexpr int MARGIN_TOP = 172;
+	RectI boundary;
 	int nMines;
 	bool isMineTriggered;
 	Tile minefield[TILES_PER_WIDTH * TILES_PER_HEIGHT];
