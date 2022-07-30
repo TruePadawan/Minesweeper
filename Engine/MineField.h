@@ -47,6 +47,7 @@ private:
 	static constexpr int TILES_PER_HEIGHT = 16;
 	static constexpr int MARGIN_LEFT = 240;
 	static constexpr int MARGIN_TOP = 172;
+	static constexpr int BORDER_WIDTH = 10;
 	RectI boundary;
 	int nMines;
 	bool isMineTriggered;

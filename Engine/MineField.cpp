@@ -149,6 +149,7 @@ void MineField::Tile::setNumberOfAdjacentMines(int count)
 void MineField::draw(Graphics& gfx)
 {
     int nTiles = TILES_PER_HEIGHT * TILES_PER_WIDTH;
+    gfx.DrawRect(boundary.GetExpanded(BORDER_WIDTH), Colors::Gray);
     gfx.DrawRect(boundary, Colors::White);
     for (int i = 0; i < nTiles; ++i)
     {
@@ -159,8 +160,7 @@ void MineField::draw(Graphics& gfx)
 bool MineField::mouseIsWithinField(const Mouse& mouse)
 {
     int tileSize = SpriteCodex::tileSize;
-    Vei2 mouseGridPos{ mouse.GetPos() };
-    return boundary.Contains(mouseGridPos);
+    return boundary.Contains(mouse.GetPos());
 }
 
 bool MineField::mineTriggered()
