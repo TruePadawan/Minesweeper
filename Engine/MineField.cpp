@@ -4,8 +4,10 @@
 #include <algorithm>
 
 MineField::MineField(int _nMines)
-    :nMines(_nMines), isMineTriggered(false)
+    :nMines(_nMines), isMineTriggered(false), nRevealedSafeTiles(0)
 {
+    assert(_nMines > 0 && _nMines < (TILES_PER_WIDTH * TILES_PER_HEIGHT));
+
     int boundaryRight = MARGIN_LEFT + (TILES_PER_WIDTH * SpriteCodex::tileSize);
     int boundaryBottom = MARGIN_TOP + (TILES_PER_HEIGHT * SpriteCodex::tileSize);
     boundary = RectI(Vei2(MARGIN_LEFT, MARGIN_TOP), Vei2(boundaryRight, boundaryBottom));
@@ -120,12 +122,14 @@ void MineField::Tile::spawnMine()
     hasMine = true;
 }
 
-void MineField::Tile::reveal()
+bool MineField::Tile::reveal()
 {
     if (state == State::Hidden)
     {
         state = State::Revealed;
+        return true;
     }
+    return false;
 }
 
 void MineField::Tile::flag()
@@ -168,13 +172,23 @@ bool MineField::mineTriggered()
     return isMineTriggered;
 }
 
+bool MineField::allTilesRevealed()
+{
+    int nSafeTiles = (TILES_PER_HEIGHT * TILES_PER_WIDTH) - nMines;
+    return (nSafeTiles == nRevealedSafeTiles);
+}
+
 void MineField::revealTile(const Vei2& pixelPos)
 {
     const Vei2 gridPos{ pixelToGridPosition(pixelPos) };
-    tileAt(gridPos).reveal();
-    if (tileAt(gridPos).hasMine)
+    if (tileAt(gridPos).reveal())
     {
-        isMineTriggered = true;
+        if (tileAt(gridPos).hasMine)
+        {
+            isMineTriggered = true;
+            return;
+        }
+        ++nRevealedSafeTiles;
     }
 }
 

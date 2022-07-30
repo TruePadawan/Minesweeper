@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(60)
+	field(8)
 {
 }
 
@@ -39,7 +39,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (field.mineTriggered()) return;
+	if (field.mineTriggered() || field.allTilesRevealed()) return;
 	// ONLY ATTEMPT TO REVEAL A TILE WHEN THE MOUSE WAS CLICKED INSIDE OF THE MINEFIELD
 	if (!wnd.mouse.IsEmpty() && field.mouseIsWithinField(wnd.mouse) == true)
 	{
@@ -58,4 +58,5 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	field.draw(gfx);
+	if (field.allTilesRevealed()) SpriteCodex::DrawWin(Vei2(400, 150), gfx);
 }

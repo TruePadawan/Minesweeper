@@ -14,6 +14,7 @@ public:
 	void flagTile(const Vei2& pixelPos);
 	bool mouseIsWithinField(const Mouse& mouse);
 	bool mineTriggered();
+	bool allTilesRevealed();
 private:
 	class Tile
 	{
@@ -27,7 +28,7 @@ private:
 		Tile(const Vei2& pos);
 		void draw(Graphics& gfx, bool mineTriggered);
 		void spawnMine();
-		void reveal();
+		bool reveal();
 		void flag();
 		void setNumberOfAdjacentMines(int count);
 	private:
@@ -43,11 +44,13 @@ private:
 	Tile& tileAt(const Vei2& gridPos);
 	Vei2 pixelToGridPosition(const Vei2& pixelPos) const;
 private:
-	static constexpr int TILES_PER_WIDTH = 20;
-	static constexpr int TILES_PER_HEIGHT = 16;
-	static constexpr int MARGIN_LEFT = 240;
-	static constexpr int MARGIN_TOP = 172;
+	static constexpr int TILES_PER_WIDTH = 6;
+	static constexpr int TILES_PER_HEIGHT = 6;
+	static constexpr int MARGIN_LEFT = (Graphics::ScreenWidth/2) - ((TILES_PER_WIDTH * SpriteCodex::tileSize)/2);
+	static constexpr int MARGIN_TOP = (Graphics::ScreenHeight/2) - ((TILES_PER_HEIGHT * SpriteCodex::tileSize)/2);
 	static constexpr int BORDER_WIDTH = 10;
+private:
+	int nRevealedSafeTiles;
 	RectI boundary;
 	int nMines;
 	bool isMineTriggered;
