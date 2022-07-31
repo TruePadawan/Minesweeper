@@ -41,7 +41,7 @@ private:
 	};
 private:
 	int getNumberOfAdjacentMines(const Tile& tile);
-	void revealAdjacentSafeTiles(const Tile& tile);
+	void revealAdjacentSafeTiles(const Tile& tile, int nTimes = 1);
 	Tile& tileAt(const Vei2& gridPos);
 	Vei2 pixelToGridPosition(const Vei2& pixelPos) const;
 private:

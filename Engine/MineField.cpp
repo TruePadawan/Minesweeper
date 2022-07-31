@@ -190,7 +190,7 @@ void MineField::revealTile(const Vei2& pixelPos)
             return;
         }
         ++nRevealedSafeTiles;
-        revealAdjacentSafeTiles(tile);
+        revealAdjacentSafeTiles(tile, 2);
     }
 }
 
@@ -234,13 +234,14 @@ Vei2 MineField::Tile::gridToPixelPosition(const Vei2& gridPos) const
     return gridPos * SpriteCodex::tileSize;
 }
 
-void MineField::revealAdjacentSafeTiles(const Tile& tile)
+void MineField::revealAdjacentSafeTiles(const Tile& tile, int nTimes)
 {
+    if (nTimes == 0) return;
+
     int xStart = std::max(0, tile.gridPos.x - 1);
     int xEnd = std::min(TILES_PER_WIDTH - 1, tile.gridPos.x + 1);
     int yStart = std::max(0, tile.gridPos.y - 1);
     int yEnd = std::min(TILES_PER_HEIGHT - 1, tile.gridPos.y + 1);
-
     for (Vei2 gridPos = { xStart, yStart }; gridPos.y <= yEnd; ++gridPos.y)
     {
         for (gridPos.x = xStart; gridPos.x <= xEnd; ++gridPos.x)
@@ -251,6 +252,7 @@ void MineField::revealAdjacentSafeTiles(const Tile& tile)
                 if (tile.reveal())
                 {
                     ++nRevealedSafeTiles;
+                    revealAdjacentSafeTiles(tile, nTimes - 1);
                 }
             }
         }
