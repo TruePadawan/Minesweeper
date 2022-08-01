@@ -45,8 +45,8 @@ private:
 	Tile& tileAt(const Vei2& gridPos);
 	Vei2 pixelToGridPosition(const Vei2& pixelPos) const;
 private:
-	static constexpr int TILES_PER_WIDTH = 7;
-	static constexpr int TILES_PER_HEIGHT = 7;
+	static constexpr int TILES_PER_WIDTH = 10;
+	static constexpr int TILES_PER_HEIGHT = 10;
 	static constexpr int MARGIN_LEFT = (Graphics::ScreenWidth/2) - ((TILES_PER_WIDTH * SpriteCodex::tileSize)/2);
 	static constexpr int MARGIN_TOP = (Graphics::ScreenHeight/2) - ((TILES_PER_HEIGHT * SpriteCodex::tileSize)/2);
 	static constexpr int BORDER_WIDTH = 10;
